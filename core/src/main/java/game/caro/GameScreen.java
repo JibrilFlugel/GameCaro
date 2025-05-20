@@ -10,12 +10,17 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+import game.caro.classes.Mark;
+import game.caro.helper.GameLogic;
 
 public class GameScreen implements Screen {
 
     final Caro game;
 
     final int BOARD_SIZE = 15;
+
+    int boardState[][] = new int[BOARD_SIZE][BOARD_SIZE];
+    boolean isGameOver = false;
 
     Texture backgroundTexture;
     Texture boardTexture;
@@ -33,27 +38,6 @@ public class GameScreen implements Screen {
 
     boolean turn = true; // true = X, false = O
 
-    public class Mark {
-        boolean isX;
-        Vector2 position;
-        float timer = 0f;
-
-        Mark(boolean isX, float x, float y) {
-            this.isX = isX;
-            this.position = new Vector2(x, y);
-        }
-
-        void update(float delta) {
-            timer += delta;
-        }
-
-        void draw(Caro game, float width, float height) {
-            Animation<TextureRegion> animation = isX ? X_animation : O_animation;
-            TextureRegion frame = animation.getKeyFrame(timer, true);
-            game.batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
-        }
-    }
-
     public GameScreen(final Caro game) {
         this.game = game;
 
@@ -61,9 +45,13 @@ public class GameScreen implements Screen {
         backgroundTexture = new Texture("background.png");
         boardTexture = new Texture("board.png");
 
+        // Board sprite initialize
         boardSprite = new Sprite(boardTexture);
         boardSprite.setSize(BOARD_SIZE, BOARD_SIZE);
         boardSize = new Vector2(boardSprite.getWidth(), boardSprite.getHeight());
+        float worldWidth = game.viewport.getWorldWidth();
+        float worldHeight = game.viewport.getWorldHeight();
+        boardSprite.setPosition((worldWidth - boardSize.x) / 2, (worldHeight - boardSize.y) / 2);
 
         cellSizeX = boardSize.x / BOARD_SIZE;
         cellSizeY = boardSize.y / BOARD_SIZE;
@@ -76,22 +64,18 @@ public class GameScreen implements Screen {
     }
 
     private void input() {
-        // TODO: Handle input
         if (Gdx.input.justTouched()) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY());
             game.viewport.unproject(touchPos);
-            tick(turn);
+        }
+
+        if (tick(turn)) {
             turn = !turn;
         }
     }
 
     private void logic() {
         // TODO: Handle game logic
-        float worldWidth = game.viewport.getWorldWidth();
-        float worldHeight = game.viewport.getWorldHeight();
-
-        // Set the position of the board sprite to the center of the screen
-        boardSprite.setPosition((worldWidth - boardSize.x) / 2, (worldHeight - boardSize.y) / 2);
 
         XO_timer += Gdx.graphics.getDeltaTime();
         for (Mark m : marks) {
@@ -112,13 +96,17 @@ public class GameScreen implements Screen {
         boardSprite.draw(game.batch);
 
         for (Mark m : marks) {
-            m.draw(game, cellSizeX, cellSizeY);
+            m.draw(game, X_animation, O_animation, cellSizeX, cellSizeY);
         }
 
         game.batch.end();
     }
 
-    private void tick(Boolean is_X) {
+    private boolean tick(Boolean is_X) {
+        if (isGameOver) {
+            return false;
+        }
+
         float boardLeft = boardSprite.getX();
         float boardBottom = boardSprite.getY();
 
@@ -126,16 +114,31 @@ public class GameScreen implements Screen {
         float y = touchPos.y;
 
         if (x < boardLeft || x > boardLeft + boardSize.x || y < boardBottom || y > boardBottom + boardSize.y) {
-            return;
+            return false;
         }
 
         int col = (int) ((x - boardLeft) / cellSizeX);
         int row = (int) ((y - boardBottom) / cellSizeY);
 
+        if (boardState[row][col] != 0) {
+            return false;
+        }
+
+        boardState[row][col] = is_X ? 1 : 2;
+
         float xPos = boardLeft + (col + 0.5f) * cellSizeX;
         float yPos = boardBottom + (row + 0.5f) * cellSizeY;
 
-        marks.add(new Mark(is_X, xPos, yPos));
+        marks.add(Mark.create(is_X, xPos, yPos));
+
+        if (GameLogic.checkWin(boardState, row, col, is_X ? 1 : 2, row)) {
+            isGameOver = true;
+            System.out.println((is_X ? "X" : "O") + " wins!");
+        } else if (GameLogic.isBoardFull(boardState, BOARD_SIZE)) {
+            isGameOver = true;
+            System.out.println("Draw!");
+        }
+        return true;
     }
 
     @Override
