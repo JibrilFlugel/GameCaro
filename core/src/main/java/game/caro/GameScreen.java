@@ -11,16 +11,19 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-
-
 public class GameScreen implements Screen {
 
     final Caro game;
+
+    final int BOARD_SIZE = 9;
 
     Texture backgroundTexture;
     Texture boardTexture;
     Vector2 touchPos;
     Sprite boardSprite;
+    Vector2 boardSize;
+    float cellSizeX;
+    float cellSizeY;
 
     // X and O
     Animation<TextureRegion> X_animation;
@@ -59,14 +62,17 @@ public class GameScreen implements Screen {
         boardTexture = new Texture("board.png");
 
         boardSprite = new Sprite(boardTexture);
-        boardSprite.setSize(15, 15);
+        boardSprite.setSize(18, 18);
+        boardSize = new Vector2(boardSprite.getWidth(), boardSprite.getHeight());
+
+        cellSizeX = boardSize.x / BOARD_SIZE;
+        cellSizeY = boardSize.y / BOARD_SIZE;
 
         touchPos = new Vector2();
 
         X_animation = new Animation<>(0.5f, game.textureAtlas.findRegions("X"), Animation.PlayMode.LOOP);
         O_animation = new Animation<>(0.5f, game.textureAtlas.findRegions("O"), Animation.PlayMode.LOOP);
         marks = new Array<>();
-
     }
 
     private void input() {
@@ -80,18 +86,16 @@ public class GameScreen implements Screen {
     }
 
     private void logic() {
-        //TODO: Handle game logic
+        // TODO: Handle game logic
         float worldWidth = game.viewport.getWorldWidth();
         float worldHeight = game.viewport.getWorldHeight();
-        float boardWidth = boardSprite.getWidth();
-        float boardHeight = boardSprite.getHeight();
 
         // Set the position of the board sprite to the center of the screen
-        boardSprite.setPosition((worldWidth - boardWidth) / 2, (worldHeight - boardHeight) / 2);
+        boardSprite.setPosition((worldWidth - boardSize.x) / 2, (worldHeight - boardSize.y) / 2);
 
         XO_timer += Gdx.graphics.getDeltaTime();
         for (Mark m : marks) {
-    m.update(Gdx.graphics.getDeltaTime());
+            m.update(Gdx.graphics.getDeltaTime());
         }
     }
 
@@ -107,20 +111,31 @@ public class GameScreen implements Screen {
         game.batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
         boardSprite.draw(game.batch);
 
-for (Mark m : marks) {
-    m.draw(game, 1, 1);
-}
+        for (Mark m : marks) {
+            m.draw(game, cellSizeX, cellSizeY);
+        }
 
         game.batch.end();
     }
 
     private void tick(Boolean is_X) {
-    float markWidth = 1;
-    float markHeight = 1;
-    float xPos = touchPos.x;
-    float yPos = touchPos.y;
+        float boardLeft = boardSprite.getX();
+        float boardBottom = boardSprite.getY();
 
-    marks.add(new Mark(is_X, xPos, yPos));
+        float x = touchPos.x;
+        float y = touchPos.y;
+
+        if (x < boardLeft || x > boardLeft + boardSize.x || y < boardBottom || y > boardBottom + boardSize.y) {
+            return;
+        }
+
+        int col = (int) ((x - boardLeft) / cellSizeX);
+        int row = (int) ((y - boardBottom) / cellSizeY);
+
+        float xPos = boardLeft + (col + 0.5f) * cellSizeX;
+        float yPos = boardBottom + (row + 0.5f) * cellSizeY;
+
+        marks.add(new Mark(is_X, xPos, yPos));
     }
 
     @Override
