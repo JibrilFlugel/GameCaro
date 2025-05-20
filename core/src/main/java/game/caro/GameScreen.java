@@ -15,7 +15,7 @@ public class GameScreen implements Screen {
 
     final Caro game;
 
-    final int BOARD_SIZE = 9;
+    final int BOARD_SIZE = 15;
 
     Texture backgroundTexture;
     Texture boardTexture;
@@ -62,7 +62,7 @@ public class GameScreen implements Screen {
         boardTexture = new Texture("board.png");
 
         boardSprite = new Sprite(boardTexture);
-        boardSprite.setSize(18, 18);
+        boardSprite.setSize(BOARD_SIZE, BOARD_SIZE);
         boardSize = new Vector2(boardSprite.getWidth(), boardSprite.getHeight());
 
         cellSizeX = boardSize.x / BOARD_SIZE;
