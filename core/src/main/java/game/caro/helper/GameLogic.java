@@ -1,6 +1,7 @@
 package game.caro.helper;
 
 public class GameLogic {
+    // TODO: This game logic is ass, need to fix later
     public static boolean isBoardFull(int[][] boardState, int size) {
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {

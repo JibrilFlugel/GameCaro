@@ -74,8 +74,7 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void logic() {
-        // TODO: Handle game logic
+    private void update() {
 
         XO_timer += Gdx.graphics.getDeltaTime();
         for (Mark m : marks) {
@@ -129,7 +128,11 @@ public class GameScreen implements Screen {
         float xPos = boardLeft + (col + 0.5f) * cellSizeX;
         float yPos = boardBottom + (row + 0.5f) * cellSizeY;
 
-        marks.add(Mark.create(is_X, xPos, yPos));
+        marks.add(Mark.create(is_X, xPos, yPos, X_animation, O_animation));
+
+        for (Mark m : marks) {
+            m.resetAnimation();
+        }
 
         if (GameLogic.checkWin(boardState, row, col, is_X ? 1 : 2, row)) {
             isGameOver = true;
@@ -144,7 +147,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         input();
-        logic();
+        update();
         draw();
     }
 

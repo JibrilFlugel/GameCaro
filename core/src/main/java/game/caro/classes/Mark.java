@@ -9,7 +9,7 @@ import game.caro.Caro;
 public class Mark {
     boolean isX;
     Vector2 position;
-    float timer = 0f;
+    float timer;
     Animation<TextureRegion> X_animation;
     Animation<TextureRegion> O_animation;
 
@@ -18,15 +18,15 @@ public class Mark {
         this.position = new Vector2(x, y);
         this.X_animation = xAnim;
         this.O_animation = oAnim;
-    }
-
-    public Mark(boolean isX, float x, float y) {
-        this.isX = isX;
-        this.position = new Vector2(x, y);
+        this.timer = 0f;
     }
 
     public void update(float delta) {
         timer += delta;
+    }
+
+    public void resetAnimation() {
+        timer = 0f;
     }
 
     public void draw(
@@ -40,7 +40,8 @@ public class Mark {
         game.batch.draw(frame, position.x - width / 2, position.y - height / 2, width, height);
     }
 
-    public static Mark create(boolean isX, float x, float y) {
-        return new Mark(isX, x, y);
+    public static Mark create(boolean isX, float x, float y,
+            Animation<TextureRegion> xAnim, Animation<TextureRegion> oAnim) {
+        return new Mark(isX, x, y, xAnim, oAnim);
     }
 }
