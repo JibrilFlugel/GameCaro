@@ -74,7 +74,7 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void update() {
+    private void logic() {
 
         XO_timer += Gdx.graphics.getDeltaTime();
         for (Mark m : marks) {
@@ -134,7 +134,7 @@ public class GameScreen implements Screen {
             m.resetAnimation();
         }
 
-        if (GameLogic.checkWin(boardState, row, col, is_X ? 1 : 2, row)) {
+        if (GameLogic.checkWin(boardState, row, col, is_X ? 1 : 2, BOARD_SIZE)) {
             isGameOver = true;
             System.out.println((is_X ? "X" : "O") + " wins!");
         } else if (GameLogic.isBoardFull(boardState, BOARD_SIZE)) {
@@ -147,7 +147,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         input();
-        update();
+        logic();
         draw();
     }
 
