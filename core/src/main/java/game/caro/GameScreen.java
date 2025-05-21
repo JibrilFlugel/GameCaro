@@ -1,6 +1,8 @@
 package game.caro;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,10 +19,13 @@ public class GameScreen implements Screen {
 
     final Caro game;
 
-    final int BOARD_SIZE = 15;
-
-    int boardState[][] = new int[BOARD_SIZE][BOARD_SIZE];
     boolean isGameOver = false;
+    final int WINDOW_WIDTH = 1280;
+    final int WINDOW_HEIGHT = 720;
+    final int BOARD_LENGTH = WINDOW_HEIGHT - 100;
+    final int BOARD_SIZE = 15;
+    int boardState[][] = new int[BOARD_SIZE][BOARD_SIZE];
+    boolean isFullscreen = false;
 
     Texture backgroundTexture;
     Texture boardTexture;
@@ -47,7 +52,7 @@ public class GameScreen implements Screen {
 
         // Board sprite initialize
         boardSprite = new Sprite(boardTexture);
-        boardSprite.setSize(BOARD_SIZE, BOARD_SIZE);
+        boardSprite.setSize(BOARD_LENGTH, BOARD_LENGTH);
         boardSize = new Vector2(boardSprite.getWidth(), boardSprite.getHeight());
         float worldWidth = game.viewport.getWorldWidth();
         float worldHeight = game.viewport.getWorldHeight();
@@ -153,6 +158,27 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean keyDown(int keycode) {
+                // Check for Alt + Enter
+                if (keycode == Input.Keys.ENTER &&
+                        (Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.ALT_RIGHT))) {
+                    if (isFullscreen) {
+                        // Switch to windowed mode
+                        Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
+                        isFullscreen = false;
+                    } else {
+                        // Switch to fullscreen mode
+                        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+                        isFullscreen = true;
+                    }
+                    ;
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override

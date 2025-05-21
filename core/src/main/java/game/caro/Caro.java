@@ -21,7 +21,7 @@ public class Caro extends Game {
     public void create() {
         batch = new SpriteBatch();
         font = new BitmapFont();
-        viewport = new FitViewport(32, 20);
+        viewport = new FitViewport(1280, 720);
         textureAtlas = new TextureAtlas(Gdx.files.internal("spritesheet.txt"));
 
         font.setUseIntegerPositions(false);
