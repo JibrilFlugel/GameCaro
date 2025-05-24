@@ -26,6 +26,8 @@ public class GameScreen implements Screen {
     final int WINDOW_HEIGHT = 720;
     final int BOARD_LENGTH = WINDOW_HEIGHT - 100;
     final int BOARD_SIZE = 15;
+    final int RESULT_WIDTH = 470;
+    final int RESULT_HEIGHT = 240;
     int[][] boardState = new int[BOARD_SIZE][BOARD_SIZE];
     boolean isFullscreen = false;
 
@@ -45,6 +47,12 @@ public class GameScreen implements Screen {
     private int playerMark;
     private int aiMark;
     private Minimax ai;
+
+    private Animation<TextureRegion> winAnimation;
+    private Animation<TextureRegion> drawAnimation;
+    private Animation<TextureRegion> lossAnimation;
+    private float resultTimer = 0f;
+    private int gameResult = 0; // 1: player wins, -1: player loss, 0: draw
 
     public GameScreen(final Caro game, int playerMark) {
         this.game = game;
@@ -70,6 +78,10 @@ public class GameScreen implements Screen {
         X_animation = new Animation<>(0.5f, game.textureAtlas.findRegions("X"), Animation.PlayMode.LOOP);
         O_animation = new Animation<>(0.5f, game.textureAtlas.findRegions("O"), Animation.PlayMode.LOOP);
         marks = new Array<>();
+
+        winAnimation = new Animation<>(0.5f, game.textureAtlas.findRegions("win"), Animation.PlayMode.LOOP);
+        drawAnimation = new Animation<>(0.5f, game.textureAtlas.findRegions("draw"), Animation.PlayMode.LOOP);
+        lossAnimation = new Animation<>(0.5f, game.textureAtlas.findRegions("loss"), Animation.PlayMode.LOOP);
     }
 
     private void input() {
@@ -82,10 +94,8 @@ public class GameScreen implements Screen {
             int row = (int) ((touchPos.y - boardBottom) / cellSizeY);
 
             if (placeMark(playerMark, row, col)) {
-                // Player's mark is placed and rendered immediately
-                isPlayerTurn = false; // Switch to AI's turn
+                isPlayerTurn = false;
 
-                // Start AI move computation in a separate thread
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -95,7 +105,7 @@ public class GameScreen implements Screen {
                             public void run() {
                                 placeMark(aiMark, aiMove[0], aiMove[1]);
                                 if (!isGameOver) {
-                                    isPlayerTurn = true; // Back to player's turn if game continues
+                                    isPlayerTurn = true;
                                 }
                             }
                         });
@@ -109,6 +119,9 @@ public class GameScreen implements Screen {
         XO_timer += Gdx.graphics.getDeltaTime();
         for (Mark m : marks) {
             m.update(Gdx.graphics.getDeltaTime());
+        }
+        if (isGameOver) {
+            resultTimer += Gdx.graphics.getDeltaTime();
         }
     }
 
@@ -128,6 +141,23 @@ public class GameScreen implements Screen {
             m.draw(game, X_animation, O_animation, cellSizeX, cellSizeY);
         }
 
+        if (isGameOver) {
+            Animation<TextureRegion> resultAnimation;
+            if (gameResult == 1) {
+                resultAnimation = winAnimation;
+            } else if (gameResult == -1) {
+                resultAnimation = lossAnimation;
+            } else {
+                resultAnimation = drawAnimation;
+            }
+            TextureRegion frame = resultAnimation.getKeyFrame(resultTimer, true);
+            float width = RESULT_WIDTH;
+            float height = RESULT_HEIGHT;
+            float x = worldWidth / 2 - width / 2;
+            float y = worldHeight / 2 - height / 2;
+            game.batch.draw(frame, x, y, width, height);
+        }
+
         game.batch.end();
     }
 
@@ -144,9 +174,15 @@ public class GameScreen implements Screen {
         }
         if (GameLogic.checkWin(boardState, row, col, mark, BOARD_SIZE)) {
             isGameOver = true;
+            if (mark == playerMark) {
+                gameResult = 1; // Player wins
+            } else {
+                gameResult = -1; // Player loss
+            }
             System.out.println((mark == 1 ? "X" : "O") + " wins!");
         } else if (GameLogic.isBoardFull(boardState, BOARD_SIZE)) {
             isGameOver = true;
+            gameResult = 0; // Draw
             System.out.println("Draw!");
         }
         return true;
