@@ -1,4 +1,4 @@
-package game.caro;
+package game.caro.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+
+import game.caro.Caro;
 import game.caro.classes.Mark;
 import game.caro.helper.GameLogic;
 

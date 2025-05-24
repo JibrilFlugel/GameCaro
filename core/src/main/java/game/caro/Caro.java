@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import game.caro.screens.GameScreen;
+
 public class Caro extends Game {
 
     public SpriteBatch batch;
