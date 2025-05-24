@@ -14,19 +14,19 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import game.caro.Caro;
+import game.caro.ai.Minimax;
 import game.caro.classes.Mark;
 import game.caro.helper.GameLogic;
 
 public class GameScreen implements Screen {
-
     final Caro game;
-
+    boolean isPlayerTurn = true;
     boolean isGameOver = false;
     final int WINDOW_WIDTH = 1280;
     final int WINDOW_HEIGHT = 720;
     final int BOARD_LENGTH = WINDOW_HEIGHT - 100;
     final int BOARD_SIZE = 15;
-    int boardState[][] = new int[BOARD_SIZE][BOARD_SIZE];
+    int[][] boardState = new int[BOARD_SIZE][BOARD_SIZE];
     boolean isFullscreen = false;
 
     Texture backgroundTexture;
@@ -37,22 +37,24 @@ public class GameScreen implements Screen {
     float cellSizeX;
     float cellSizeY;
 
-    // X and O
     Animation<TextureRegion> X_animation;
     Animation<TextureRegion> O_animation;
     Array<Mark> marks;
     float XO_timer = 0f;
 
-    boolean turn = true; // true = X, false = O
+    private int playerMark;
+    private int aiMark;
+    private Minimax ai;
 
-    public GameScreen(final Caro game) {
+    public GameScreen(final Caro game, int playerMark) {
         this.game = game;
+        this.playerMark = playerMark;
+        this.aiMark = (playerMark == 1) ? 2 : 1;
+        this.ai = new Minimax(aiMark);
 
-        // Load textures
         backgroundTexture = new Texture("background.png");
         boardTexture = new Texture("board.png");
 
-        // Board sprite initialize
         boardSprite = new Sprite(boardTexture);
         boardSprite.setSize(BOARD_LENGTH, BOARD_LENGTH);
         boardSize = new Vector2(boardSprite.getWidth(), boardSprite.getHeight());
@@ -71,18 +73,39 @@ public class GameScreen implements Screen {
     }
 
     private void input() {
-        if (Gdx.input.justTouched()) {
+        if (Gdx.input.justTouched() && !isGameOver && isPlayerTurn) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY());
             game.viewport.unproject(touchPos);
-        }
+            float boardLeft = boardSprite.getX();
+            float boardBottom = boardSprite.getY();
+            int col = (int) ((touchPos.x - boardLeft) / cellSizeX);
+            int row = (int) ((touchPos.y - boardBottom) / cellSizeY);
 
-        if (tick(turn)) {
-            turn = !turn;
+            if (placeMark(playerMark, row, col)) {
+                // Player's mark is placed and rendered immediately
+                isPlayerTurn = false; // Switch to AI's turn
+
+                // Start AI move computation in a separate thread
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final int[] aiMove = ai.findBestMove(boardState);
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                placeMark(aiMark, aiMove[0], aiMove[1]);
+                                if (!isGameOver) {
+                                    isPlayerTurn = true; // Back to player's turn if game continues
+                                }
+                            }
+                        });
+                    }
+                }).start();
+            }
         }
     }
 
     private void logic() {
-
         XO_timer += Gdx.graphics.getDeltaTime();
         for (Mark m : marks) {
             m.update(Gdx.graphics.getDeltaTime());
@@ -108,42 +131,20 @@ public class GameScreen implements Screen {
         game.batch.end();
     }
 
-    private boolean tick(Boolean is_X) {
-        if (isGameOver) {
+    private boolean placeMark(int mark, int row, int col) {
+        if (row < 0 || row >= BOARD_SIZE || col < 0 || col >= BOARD_SIZE || boardState[row][col] != 0) {
             return false;
         }
-
-        float boardLeft = boardSprite.getX();
-        float boardBottom = boardSprite.getY();
-
-        float x = touchPos.x;
-        float y = touchPos.y;
-
-        if (x < boardLeft || x > boardLeft + boardSize.x || y < boardBottom || y > boardBottom + boardSize.y) {
-            return false;
-        }
-
-        int col = (int) ((x - boardLeft) / cellSizeX);
-        int row = (int) ((y - boardBottom) / cellSizeY);
-
-        if (boardState[row][col] != 0) {
-            return false;
-        }
-
-        boardState[row][col] = is_X ? 1 : 2;
-
-        float xPos = boardLeft + (col + 0.5f) * cellSizeX;
-        float yPos = boardBottom + (row + 0.5f) * cellSizeY;
-
-        marks.add(Mark.create(is_X, xPos, yPos, X_animation, O_animation));
-
+        boardState[row][col] = mark;
+        float xPos = boardSprite.getX() + (col + 0.5f) * cellSizeX;
+        float yPos = boardSprite.getY() + (row + 0.5f) * cellSizeY;
+        marks.add(Mark.create(mark == 1, xPos, yPos, X_animation, O_animation));
         for (Mark m : marks) {
             m.resetAnimation();
         }
-
-        if (GameLogic.checkWin(boardState, row, col, is_X ? 1 : 2, BOARD_SIZE)) {
+        if (GameLogic.checkWin(boardState, row, col, mark, BOARD_SIZE)) {
             isGameOver = true;
-            System.out.println((is_X ? "X" : "O") + " wins!");
+            System.out.println((mark == 1 ? "X" : "O") + " wins!");
         } else if (GameLogic.isBoardFull(boardState, BOARD_SIZE)) {
             isGameOver = true;
             System.out.println("Draw!");
@@ -163,19 +164,15 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
-                // Check for Alt + Enter
                 if (keycode == Input.Keys.ENTER &&
                         (Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.ALT_RIGHT))) {
                     if (isFullscreen) {
-                        // Switch to windowed mode
                         Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
                         isFullscreen = false;
                     } else {
-                        // Switch to fullscreen mode
                         Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
                         isFullscreen = true;
                     }
-                    ;
                     return true;
                 }
                 return false;

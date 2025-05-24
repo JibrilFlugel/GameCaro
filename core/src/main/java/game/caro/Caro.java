@@ -2,14 +2,12 @@ package game.caro;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import game.caro.screens.GameScreen;
+import game.caro.screens.ChoiceScreen;
 
 public class Caro extends Game {
 
@@ -17,7 +15,6 @@ public class Caro extends Game {
     public BitmapFont font;
     public FitViewport viewport;
     public TextureAtlas textureAtlas;
-    public Animation<TextureRegion> animation;
 
     @Override
     public void create() {
@@ -29,7 +26,7 @@ public class Caro extends Game {
         font.setUseIntegerPositions(false);
         font.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
 
-        this.setScreen(new GameScreen(this));
+        this.setScreen(new ChoiceScreen(this));
     }
 
     @Override
