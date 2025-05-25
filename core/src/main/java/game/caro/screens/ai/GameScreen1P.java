@@ -1,4 +1,4 @@
-package game.caro.screens;
+package game.caro.screens.ai;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -18,7 +18,7 @@ import game.caro.ai.Minimax;
 import game.caro.classes.Mark;
 import game.caro.helper.GameLogic;
 
-public class GameScreen implements Screen {
+public class GameScreen1P implements Screen {
     final Caro game;
     boolean isPlayerTurn = true;
     boolean isGameOver = false;
@@ -54,7 +54,7 @@ public class GameScreen implements Screen {
     private float resultTimer = 0f;
     private int gameResult = 0; // 1: player wins, -1: player loss, 0: draw
 
-    public GameScreen(final Caro game, int playerMark) {
+    public GameScreen1P(final Caro game, int playerMark) {
         this.game = game;
         this.playerMark = playerMark;
         this.aiMark = (playerMark == 1) ? 2 : 1;

@@ -1,4 +1,4 @@
-package game.caro.screens;
+package game.caro.screens.ai;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -39,14 +39,14 @@ public class ChoiceScreen implements Screen {
         animatedX.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game, 1));
+                game.setScreen(new GameScreen1P(game, 1));
             }
         });
 
         animatedO.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game, 2));
+                game.setScreen(new GameScreen1P(game, 2));
             }
         });
 

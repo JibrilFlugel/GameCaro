@@ -7,7 +7,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import game.caro.screens.ChoiceScreen;
+import game.caro.screens.ModeChoiceScreen;
+import game.caro.screens.ai.ChoiceScreen;
 
 public class Caro extends Game {
 
@@ -26,7 +27,7 @@ public class Caro extends Game {
         font.setUseIntegerPositions(false);
         font.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
 
-        this.setScreen(new ChoiceScreen(this));
+        this.setScreen(new ModeChoiceScreen(this));
     }
 
     @Override
