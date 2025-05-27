@@ -123,9 +123,8 @@ public class GameScreen1P implements Screen {
     }
 
     private void draw() {
-        game.clearAndSetPM();
-        game.batch.begin();
-        game.drawBackground();
+        game.beginFrame();
+
         boardSprite.draw(game.batch);
 
         for (Mark m : marks) {
@@ -149,7 +148,7 @@ public class GameScreen1P implements Screen {
             game.batch.draw(frame, x, y, width, height);
         }
 
-        game.batch.end();
+        game.endFrame();
     }
 
     private boolean placeMark(int mark, int row, int col) {

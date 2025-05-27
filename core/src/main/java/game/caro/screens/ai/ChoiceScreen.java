@@ -60,9 +60,8 @@ public class ChoiceScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        game.batch.begin();
-        game.drawBackground();
-        game.batch.end();
+        game.beginFrame();
+        game.endFrame();
         stage.act(delta);
         stage.draw();
     }

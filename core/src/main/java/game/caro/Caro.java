@@ -51,10 +51,16 @@ public class Caro extends Game {
         inputMultiplexer.addProcessor(screenInputProcessor);
     }
 
-    public void clearAndSetPM() {
+    public void beginFrame() {
         ScreenUtils.clear(Color.BLACK);
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
+        batch.begin();
+        drawBackground();
+    }
+
+    public void endFrame() {
+        batch.end();
     }
 
     public void drawBackground() {
