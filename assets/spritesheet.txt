@@ -1,46 +1,46 @@
 spritesheet.png
-size: 234, 234
+size: 250, 192
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 ai
   rotate: false
-  xy: 0, 184
+  xy: 0, 160
   size: 64, 32
   orig: 64, 32
   offset: 0, 0
   index: -1
 aiHighlighted
   rotate: false
-  xy: 32, 16
+  xy: 16, 16
   size: 62, 24
   orig: 62, 24
   offset: 0, 0
   index: 0
 aiHighlighted
   rotate: false
-  xy: 94, 16
+  xy: 78, 16
   size: 62, 24
   orig: 62, 24
   offset: 0, 0
   index: 1
 back
   rotate: false
-  xy: 64, 184
+  xy: 64, 160
   size: 48, 32
   orig: 48, 32
   offset: 0, 0
   index: -1
 backHighlighted
   rotate: false
-  xy: 156, 16
+  xy: 140, 16
   size: 46, 24
   orig: 46, 24
   offset: 0, 0
   index: 0
 backHighlighted
   rotate: false
-  xy: 0, 40
+  xy: 186, 16
   size: 46, 24
   orig: 46, 24
   offset: 0, 0
@@ -54,14 +54,14 @@ colon
   index: -1
 draw
   rotate: false
-  xy: 46, 40
+  xy: 0, 40
   size: 94, 24
   orig: 94, 24
   offset: 0, 0
   index: 0
 draw
   rotate: false
-  xy: 140, 40
+  xy: 94, 40
   size: 94, 24
   orig: 94, 24
   offset: 0, 0
@@ -75,56 +75,56 @@ highlightedTile
   index: -1
 host
   rotate: false
-  xy: 0, 64
+  xy: 188, 40
   size: 49, 24
   orig: 49, 24
   offset: 0, 0
   index: -1
+hostHighlighted
+  rotate: false
+  xy: 0, 64
+  size: 49, 24
+  orig: 49, 24
+  offset: 0, 0
+  index: 0
 hostHighlighted
   rotate: false
   xy: 49, 64
   size: 49, 24
   orig: 49, 24
   offset: 0, 0
-  index: 0
-hostHighlighted
-  rotate: false
-  xy: 98, 64
-  size: 49, 24
-  orig: 49, 24
-  offset: 0, 0
   index: 1
 join
   rotate: false
-  xy: 147, 64
+  xy: 98, 64
   size: 49, 24
   orig: 49, 24
   offset: 0, 0
   index: -1
 joinHighlighted_0 
   rotate: false
-  xy: 0, 88
+  xy: 147, 64
   size: 49, 24
   orig: 49, 24
   offset: 0, 0
   index: -1
 joinHighlighted_1 
   rotate: false
-  xy: 49, 88
+  xy: 196, 64
   size: 49, 24
   orig: 49, 24
   offset: 0, 0
   index: -1
 loss
   rotate: false
-  xy: 98, 88
+  xy: 0, 88
   size: 94, 24
   orig: 94, 24
   offset: 0, 0
   index: 0
 loss
   rotate: false
-  xy: 0, 112
+  xy: 94, 88
   size: 94, 24
   orig: 94, 24
   offset: 0, 0
@@ -215,91 +215,91 @@ O
   index: 1
 play
   rotate: false
-  xy: 112, 184
+  xy: 112, 160
   size: 48, 32
   orig: 48, 32
   offset: 0, 0
   index: -1
 playHighlighted
   rotate: false
-  xy: 94, 112
+  xy: 188, 88
   size: 46, 24
   orig: 46, 24
   offset: 0, 0
   index: 0
 playHighlighted
   rotate: false
-  xy: 140, 112
+  xy: 0, 112
   size: 46, 24
   orig: 46, 24
   offset: 0, 0
   index: 1
 quit
   rotate: false
-  xy: 160, 184
+  xy: 160, 160
   size: 48, 32
   orig: 48, 32
   offset: 0, 0
   index: -1
 quitHighlighted
   rotate: false
-  xy: 186, 112
+  xy: 46, 112
   size: 46, 24
   orig: 46, 24
   offset: 0, 0
   index: 0
 quitHighlighted
   rotate: false
-  xy: 0, 136
+  xy: 92, 112
   size: 46, 24
   orig: 46, 24
   offset: 0, 0
   index: 1
 replay
   rotate: false
-  xy: 46, 136
+  xy: 138, 112
   size: 56, 24
   orig: 56, 24
   offset: 0, 0
   index: -1
 replayHighlighted
   rotate: false
-  xy: 102, 136
+  xy: 194, 112
   size: 56, 24
   orig: 56, 24
   offset: 0, 0
   index: 0
 replayHighlighted
   rotate: false
-  xy: 158, 136
+  xy: 0, 136
   size: 56, 24
   orig: 56, 24
   offset: 0, 0
   index: 1
 win
   rotate: false
-  xy: 0, 160
+  xy: 56, 136
   size: 94, 24
   orig: 94, 24
   offset: 0, 0
   index: 0
 win
   rotate: false
-  xy: 94, 160
+  xy: 150, 136
   size: 94, 24
   orig: 94, 24
   offset: 0, 0
   index: 1
 X
   rotate: false
-  xy: 0, 16
+  xy: 224, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 0
 X
   rotate: false
-  xy: 16, 16
+  xy: 0, 16
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

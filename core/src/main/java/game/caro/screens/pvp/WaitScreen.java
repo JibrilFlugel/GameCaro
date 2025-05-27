@@ -17,7 +17,7 @@ import java.net.Socket;
 
 public class WaitScreen implements Screen {
     private Stage stage;
-    private Caro game;
+    final Caro game;
     private boolean isHosting;
     private Socket socket;
 

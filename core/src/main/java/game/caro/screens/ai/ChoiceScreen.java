@@ -1,8 +1,6 @@
 package game.caro.screens.ai;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -18,10 +16,11 @@ import game.caro.Caro;
 
 public class ChoiceScreen implements Screen {
     private Stage stage;
+    private final Caro game;
 
     public ChoiceScreen(Caro game) {
+        this.game = game;
         stage = new Stage(game.viewport, game.batch);
-        Gdx.input.setInputProcessor(stage);
 
         Array<AtlasRegion> xFrames = game.textureAtlas.findRegions("X");
         Array<AtlasRegion> oFrames = game.textureAtlas.findRegions("O");
@@ -61,8 +60,9 @@ public class ChoiceScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        game.batch.begin();
+        game.drawBackground();
+        game.batch.end();
         stage.act(delta);
         stage.draw();
     }
@@ -74,10 +74,12 @@ public class ChoiceScreen implements Screen {
 
     @Override
     public void show() {
+        game.addScreenInputProcessor(stage);
     }
 
     @Override
     public void hide() {
+        stage.clear();
     }
 
     @Override

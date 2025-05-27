@@ -1,37 +1,33 @@
 package game.caro.screens.ai;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 import game.caro.Caro;
 import game.caro.ai.Minimax;
 import game.caro.classes.Mark;
+import game.caro.helper.GameConfig;
 import game.caro.helper.GameLogic;
 
 public class GameScreen1P implements Screen {
     final Caro game;
     boolean isPlayerTurn = true;
     boolean isGameOver = false;
-    final int WINDOW_WIDTH = 1280;
-    final int WINDOW_HEIGHT = 720;
-    final int BOARD_LENGTH = WINDOW_HEIGHT - 100;
-    final int BOARD_SIZE = 15;
-    final int RESULT_WIDTH = 470;
-    final int RESULT_HEIGHT = 240;
+    final int BOARD_LENGTH = GameConfig.BOARD_LENGTH;
+    final int BOARD_SIZE = GameConfig.BOARD_SIZE;
     int[][] boardState = new int[BOARD_SIZE][BOARD_SIZE];
     boolean isFullscreen = false;
 
-    Texture backgroundTexture;
+    final float worldWidth;
+    final float worldHeight;
+
+    final Texture backgroundTexture;
     Texture boardTexture;
     Vector2 touchPos;
     Sprite boardSprite;
@@ -59,15 +55,16 @@ public class GameScreen1P implements Screen {
         this.playerMark = playerMark;
         this.aiMark = (playerMark == 1) ? 2 : 1;
         this.ai = new Minimax(aiMark);
+        this.backgroundTexture = game.backgroundTexture;
+        worldHeight = game.viewport.getWorldHeight();
+        worldWidth = game.viewport.getWorldWidth();
 
-        backgroundTexture = new Texture("background.png");
         boardTexture = new Texture("board.png");
 
         boardSprite = new Sprite(boardTexture);
         boardSprite.setSize(BOARD_LENGTH, BOARD_LENGTH);
         boardSize = new Vector2(boardSprite.getWidth(), boardSprite.getHeight());
-        float worldWidth = game.viewport.getWorldWidth();
-        float worldHeight = game.viewport.getWorldHeight();
+
         boardSprite.setPosition((worldWidth - boardSize.x) / 2, (worldHeight - boardSize.y) / 2);
 
         cellSizeX = boardSize.x / BOARD_SIZE;
@@ -126,15 +123,9 @@ public class GameScreen1P implements Screen {
     }
 
     private void draw() {
-        ScreenUtils.clear(Color.BLACK);
-        game.viewport.apply();
-        game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
+        game.clearAndSetPM();
         game.batch.begin();
-
-        float worldWidth = game.viewport.getWorldWidth();
-        float worldHeight = game.viewport.getWorldHeight();
-
-        game.batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
+        game.drawBackground();
         boardSprite.draw(game.batch);
 
         for (Mark m : marks) {
@@ -151,10 +142,10 @@ public class GameScreen1P implements Screen {
                 resultAnimation = drawAnimation;
             }
             TextureRegion frame = resultAnimation.getKeyFrame(resultTimer, true);
-            float width = RESULT_WIDTH;
-            float height = RESULT_HEIGHT;
+            float width = GameConfig.RESULT_WIDTH;
+            float height = GameConfig.RESULT_HEIGHT;
             float x = worldWidth / 2 - width / 2;
-            float y = worldHeight / 2 - height / 2;
+            float y = worldHeight / 2 + height / 2;
             game.batch.draw(frame, x, y, width, height);
         }
 
@@ -197,23 +188,6 @@ public class GameScreen1P implements Screen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(new InputAdapter() {
-            @Override
-            public boolean keyDown(int keycode) {
-                if (keycode == Input.Keys.ENTER &&
-                        (Gdx.input.isKeyPressed(Input.Keys.ALT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.ALT_RIGHT))) {
-                    if (isFullscreen) {
-                        Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
-                        isFullscreen = false;
-                    } else {
-                        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
-                        isFullscreen = true;
-                    }
-                    return true;
-                }
-                return false;
-            }
-        });
     }
 
     @Override
