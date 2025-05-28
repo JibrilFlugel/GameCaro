@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Scaling;
 
 import game.caro.Caro;
 import game.caro.screens.ai.ChoiceScreen;
-import game.caro.screens.pvp.WaitScreen;
+import game.caro.screens.pvp.GameScreenMultiplayer;
 
 public class HomeScreen implements Screen {
     final Caro game;
@@ -43,14 +43,16 @@ public class HomeScreen implements Screen {
         imageHost.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new WaitScreen(game, true));
+                game.setScreen(new GameScreenMultiplayer(game, true, null));
             }
         });
 
-        imageHost.addListener(new ClickListener() {
+        imageJoin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new WaitScreen(game, false));
+                game.setScreen(new GameScreenMultiplayer(game, false, ""));
+                // TODO: Currently have to manually specify ip when test, fix later
+
             }
         });
 
