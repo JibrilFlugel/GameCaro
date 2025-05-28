@@ -1,9 +1,16 @@
 package game.caro.screens.pvp;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.Enumeration;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -58,6 +65,8 @@ public class GameScreenMultiplayer implements Screen {
     private Thread networkThread;
     private String gameState = "WAITING"; // WAITING, PLAYING, GAME_OVER
     private String serverIp;
+    private String code;
+    private volatile boolean broadcasting = true;
 
     public GameScreenMultiplayer(final Caro game, boolean isServer, String serverIp) {
         this.game = game;
@@ -89,12 +98,14 @@ public class GameScreenMultiplayer implements Screen {
             localMark = 1;
             remoteMark = 2;
             isLocalPlayerTurn = true; // Server makes first move
+            code = String.valueOf(1000 + new Random().nextInt(9000));
             setupServer();
+            startBroadcasting();
         } else {
             localMark = 2;
             remoteMark = 1;
             isLocalPlayerTurn = false;
-            setupClient();
+            connectToServer();
         }
         // TODO: Randomize mark for server and client
     }
@@ -107,6 +118,7 @@ public class GameScreenMultiplayer implements Screen {
                 networkHandler = new NetworkHandler(clientSocket, this);
                 networkThread = new Thread(networkHandler);
                 networkThread.start();
+                broadcasting = false;
                 Gdx.app.postRunnable(() -> gameState = "PLAYING");
                 serverSocket.close();
             } catch (IOException e) {
@@ -115,7 +127,7 @@ public class GameScreenMultiplayer implements Screen {
         }).start();
     }
 
-    private void setupClient() {
+    private void connectToServer() {
         new Thread(() -> {
             try {
                 Socket socket = new Socket(serverIp, 12345);
@@ -127,6 +139,44 @@ public class GameScreenMultiplayer implements Screen {
                 Gdx.app.log("Client", "Error: " + e.getMessage());
             }
         }).start();
+    }
+
+    private void startBroadcasting() {
+        new Thread(() -> {
+            try {
+                DatagramSocket socket = new DatagramSocket();
+                socket.setBroadcast(true);
+                String localIp = getLocalIpAddress();
+                String message = "CARO_CODE:" + code + ":" + localIp;
+                DatagramPacket packet = new DatagramPacket(message.getBytes(), message.length(),
+                        InetAddress.getByName("255.255.255.255"), 12346);
+
+                while (broadcasting) {
+                    socket.send(packet);
+                    Thread.sleep(1000);
+                }
+                socket.close();
+            } catch (IOException | InterruptedException e) {
+                Gdx.app.log("Server", "Broadcast error: " + e.getMessage());
+            }
+        }).start();
+    }
+
+    private String getLocalIpAddress() {
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
+                        return inetAddress.getHostAddress();
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            Gdx.app.log("Server", "Error getting local IP: " + ex.getMessage());
+        }
+        return "127.0.0.1";
     }
 
     private void input() {
@@ -210,8 +260,7 @@ public class GameScreenMultiplayer implements Screen {
 
         if (gameState.equals("WAITING") && isServer) {
             try {
-                String ip = InetAddress.getLocalHost().getHostAddress();
-                game.font.draw(game.batch, "Waiting for opponent. Your IP: " + ip, 50, worldHeight - 50);
+                game.font.draw(game.batch, "Your code: " + code, 50, worldHeight - 50);
             } catch (Exception e) {
                 game.font.draw(game.batch, "Waiting for opponent...", 50, worldHeight - 50);
             }
