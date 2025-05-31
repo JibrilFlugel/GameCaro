@@ -8,6 +8,7 @@ public class GameConfig {
     public static final int FPS = 60;
     public static final int BOARD_SIZE = 15;
     public static final int BOARD_LENGTH = WINDOW_HEIGHT - 100;
+    public static final float MENU_BUTTON_SIZE = 150f;
 
     public static final String TITLE = "Caro Game";
 
