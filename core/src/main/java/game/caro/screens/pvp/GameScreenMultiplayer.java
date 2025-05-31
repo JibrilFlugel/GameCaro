@@ -17,7 +17,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -209,7 +212,7 @@ public class GameScreenMultiplayer implements Screen {
         if (!gameState.equals("GAME_OVER")) {
             gameState = "GAME_OVER";
             isGameOver = true;
-            gameResult = -1; // Disconnect = loss
+            gameResult = 1; // Opponent disconnect = insta win
         }
     }
 
@@ -260,7 +263,8 @@ public class GameScreenMultiplayer implements Screen {
 
         if (gameState.equals("WAITING") && isServer) {
             try {
-                game.font.draw(game.batch, "Your code: " + code, 50, worldHeight - 50);
+                game.font.draw(game.batch, "Your code", 50, worldHeight - 50);
+                renderCode(game.batch, game.textureAtlas, code, 50, worldHeight - 120);
             } catch (Exception e) {
                 game.font.draw(game.batch, "Waiting for opponent...", 50, worldHeight - 50);
             }
@@ -327,5 +331,21 @@ public class GameScreenMultiplayer implements Screen {
 
     @Override
     public void resume() {
+    }
+
+    public void renderCode(SpriteBatch batch, TextureAtlas atlas, String code, float x, float y) {
+        float size = 50;
+        float pos = 0;
+        for (int i = 0; i < code.length(); i++) {
+            char digit = code.charAt(i);
+            if (Character.isDigit(digit)) {
+                Array<AtlasRegion> digitRegions = atlas.findRegions("numbers");
+                TextureRegion num = digitRegions.get(digit - '0');
+                if (num != null) {
+                    batch.draw(num, x + pos * size, y, size, size);
+                    pos++;
+                }
+            }
+        }
     }
 }
