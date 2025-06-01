@@ -41,6 +41,7 @@ public class GameScreenMultiplayer implements Screen {
     final float worldHeight;
 
     final Texture backgroundTexture;
+    private Array<AtlasRegion> digitRegions;
     Texture boardTexture;
     Vector2 touchPos;
     Sprite boardSprite;
@@ -79,6 +80,8 @@ public class GameScreenMultiplayer implements Screen {
         this.backgroundTexture = game.backgroundTexture;
         worldHeight = game.viewport.getWorldHeight();
         worldWidth = game.viewport.getWorldWidth();
+
+        digitRegions = game.textureAtlas.findRegions("numbers");
 
         boardTexture = new Texture("board.png");
         boardSprite = new Sprite(boardTexture);
@@ -265,16 +268,24 @@ public class GameScreenMultiplayer implements Screen {
             m.draw(game, X_animation, O_animation, cellSizeX, cellSizeY);
         }
 
+        //TODO: Remove raw text
         if (gameState.equals("WAITING") && isServer) {
             try {
                 game.font.draw(game.batch, "Your code", 50, worldHeight - 50);
-                renderCode(game.batch, game.textureAtlas, code, 50, worldHeight - 120);
+                renderCode(game.batch, code, 50, worldHeight - 120);
             } catch (Exception e) {
                 game.font.draw(game.batch, "Waiting for opponent...", 50, worldHeight - 50);
             }
         } else if (gameState.equals("PLAYING")) {
             String turnText = isLocalPlayerTurn ? "Your turn" : "Opponent's turn";
             game.font.draw(game.batch, turnText, 50, worldHeight - 50);
+
+            // countdown
+            int remaining = Math.max(0, 30 - ((int) turnTimer)); // remaining >= 0
+            String timeString = String.valueOf(remaining);
+            if (remaining < 10)
+                timeString = '0' + timeString;
+            renderCode(game.batch, timeString, 50, worldHeight - 120);
         }
 
         if (gameState.equals("GAME_OVER")) {
@@ -345,13 +356,12 @@ public class GameScreenMultiplayer implements Screen {
     public void resume() {
     }
 
-    public void renderCode(SpriteBatch batch, TextureAtlas atlas, String code, float x, float y) {
+    public void renderCode(SpriteBatch batch, String code, float x, float y) {
         float size = 50;
         float pos = 0;
         for (int i = 0; i < code.length(); i++) {
             char digit = code.charAt(i);
             if (Character.isDigit(digit)) {
-                Array<AtlasRegion> digitRegions = atlas.findRegions("numbers");
                 TextureRegion num = digitRegions.get(digit - '0');
                 if (num != null) {
                     batch.draw(num, x + pos * size, y, size, size);
