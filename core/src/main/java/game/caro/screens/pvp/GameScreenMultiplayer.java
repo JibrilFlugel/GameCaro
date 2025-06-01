@@ -70,6 +70,7 @@ public class GameScreenMultiplayer implements Screen {
     private String serverIp;
     private String code;
     private volatile boolean broadcasting = true;
+    private float turnTimer = 0f;
 
     public GameScreenMultiplayer(final Caro game, boolean isServer, String serverIp) {
         this.game = game;
@@ -110,7 +111,6 @@ public class GameScreenMultiplayer implements Screen {
             isLocalPlayerTurn = false;
             connectToServer();
         }
-        // TODO: Randomize mark for server and client
     }
 
     private void setupServer() {
@@ -205,6 +205,10 @@ public class GameScreenMultiplayer implements Screen {
             int col = Integer.parseInt(parts[2]);
             placeMark(remoteMark, row, col);
             isLocalPlayerTurn = true;
+            turnTimer = 0f;
+        } else if (message.equals("TURN_SWITCH")) {
+            isLocalPlayerTurn = true;
+            turnTimer = 0f;
         }
     }
 
@@ -295,6 +299,14 @@ public class GameScreenMultiplayer implements Screen {
 
     @Override
     public void render(float delta) {
+        if (gameState.equals("PLAYING") && isLocalPlayerTurn) {
+            turnTimer += delta;
+            if (turnTimer > GameConfig.TIME_SPAN) {
+                isLocalPlayerTurn = false;
+                networkHandler.sendMessage("TURN_SWITCH");
+                turnTimer = 0f;
+            }
+        }
         input();
         logic();
         draw();
