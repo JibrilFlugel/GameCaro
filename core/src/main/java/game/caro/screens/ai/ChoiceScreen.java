@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
 import game.caro.Caro;
+import game.caro.helper.GameConfig;
 
 public class ChoiceScreen implements Screen {
     private Stage stage;
@@ -25,10 +26,12 @@ public class ChoiceScreen implements Screen {
         Array<AtlasRegion> xFrames = game.textureAtlas.findRegions("X");
         Array<AtlasRegion> oFrames = game.textureAtlas.findRegions("O");
 
-        Animation<TextureRegion> xAnimation = new Animation<>(0.5f, xFrames, Animation.PlayMode.LOOP);
-        Animation<TextureRegion> oAnimation = new Animation<>(0.5f, oFrames, Animation.PlayMode.LOOP);
+        Animation<TextureRegion> xAnimation = new Animation<>(GameConfig.FRAME_DURATION, xFrames,
+                Animation.PlayMode.LOOP);
+        Animation<TextureRegion> oAnimation = new Animation<>(GameConfig.FRAME_DURATION, oFrames,
+                Animation.PlayMode.LOOP);
 
-        float buttonSize = 100f;
+        float buttonSize = GameConfig.MENU.BUTTON_HEIGHT;
 
         AnimatedActor animatedX = new AnimatedActor(xAnimation);
         AnimatedActor animatedO = new AnimatedActor(oAnimation);

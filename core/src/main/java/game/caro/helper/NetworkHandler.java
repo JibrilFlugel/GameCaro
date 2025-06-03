@@ -53,7 +53,6 @@ public class NetworkHandler implements Runnable {
             out.close();
             socket.close();
         } catch (IOException e) {
-            // TODO: idk what to put here
         }
     }
 }

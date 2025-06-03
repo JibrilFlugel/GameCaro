@@ -23,8 +23,8 @@ public class Caro extends Game {
     public FitViewport viewport;
     public TextureAtlas textureAtlas;
     public Texture backgroundTexture;
-    private final GlobalInputHandler globalInputHandler = new GlobalInputHandler(GameConfig.WINDOW_WIDTH,
-            GameConfig.WINDOW_HEIGHT);
+    private final GlobalInputHandler globalInputHandler = new GlobalInputHandler(GameConfig.WINDOW.WIDTH,
+            GameConfig.WINDOW.HEIGHT);
 
     private InputMultiplexer inputMultiplexer = new InputMultiplexer();
 
@@ -32,7 +32,7 @@ public class Caro extends Game {
     public void create() {
         batch = new SpriteBatch();
         font = new BitmapFont();
-        viewport = new FitViewport(GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT);
+        viewport = new FitViewport(GameConfig.WINDOW.WIDTH, GameConfig.WINDOW.HEIGHT);
         textureAtlas = new TextureAtlas(Gdx.files.internal("spritesheet.txt"));
         backgroundTexture = new Texture("background.png");
 

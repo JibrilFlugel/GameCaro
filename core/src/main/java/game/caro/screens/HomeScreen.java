@@ -47,15 +47,16 @@ public class HomeScreen implements Screen {
         TextureRegion joinRegion = game.textureAtlas.findRegion("join");
         TextureRegion aiRegion = game.textureAtlas.findRegion("ai");
 
-        float buttonSize = GameConfig.MENU_BUTTON_SIZE;
+        float buttonWidth = GameConfig.MENU.BUTTON_WIDTH;
+        float buttonHeight = GameConfig.MENU.BUTTON_HEIGHT;
 
         Image imageHost = new Image(new TextureRegionDrawable(hostRegion));
         Image imageJoin = new Image(new TextureRegionDrawable(joinRegion));
         Image imageAI = new Image(new TextureRegionDrawable(aiRegion));
 
-        imageHost.setSize(buttonSize, buttonSize);
-        imageAI.setSize(buttonSize, buttonSize);
-        imageJoin.setSize(buttonSize, buttonSize);
+        imageHost.setSize(buttonWidth, buttonHeight);
+        imageAI.setSize(buttonWidth, buttonHeight);
+        imageJoin.setSize(buttonWidth, buttonHeight);
 
         imageHost.setScaling(Scaling.fill);
         imageAI.setScaling(Scaling.fill);
@@ -181,11 +182,11 @@ public class HomeScreen implements Screen {
 
         Table table = new Table();
         table.setFillParent(true);
-        table.add(imageHost).size(buttonSize, buttonSize).pad(20);
+        table.add(imageHost).size(buttonWidth, buttonHeight).pad(GameConfig.WINDOW.SPACING);
         table.row();
-        table.add(imageJoin).size(buttonSize, buttonSize).pad(20);
+        table.add(imageJoin).size(buttonWidth, buttonHeight).pad(GameConfig.WINDOW.SPACING);
         table.row();
-        table.add(imageAI).size(buttonSize, buttonSize).pad(20);
+        table.add(imageAI).size(buttonWidth, buttonHeight).pad(GameConfig.WINDOW.SPACING);
 
         stage.addActor(table);
     }
