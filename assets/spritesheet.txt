@@ -1,46 +1,46 @@
 spritesheet.png
-size: 250, 192
+size: 475, 120
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 ai
   rotate: false
-  xy: 0, 160
-  size: 64, 32
-  orig: 64, 32
+  xy: 230, 24
+  size: 49, 24
+  orig: 49, 24
   offset: 0, 0
   index: -1
 aiHighlighted
   rotate: false
-  xy: 16, 16
-  size: 62, 24
-  orig: 62, 24
+  xy: 279, 24
+  size: 49, 24
+  orig: 49, 24
   offset: 0, 0
   index: 0
 aiHighlighted
   rotate: false
-  xy: 78, 16
-  size: 62, 24
-  orig: 62, 24
+  xy: 328, 24
+  size: 49, 24
+  orig: 49, 24
   offset: 0, 0
   index: 1
 back
   rotate: false
-  xy: 64, 160
-  size: 48, 32
-  orig: 48, 32
+  xy: 256, 0
+  size: 46, 24
+  orig: 46, 24
   offset: 0, 0
   index: -1
 backHighlighted
   rotate: false
-  xy: 140, 16
+  xy: 302, 0
   size: 46, 24
   orig: 46, 24
   offset: 0, 0
   index: 0
 backHighlighted
   rotate: false
-  xy: 186, 16
+  xy: 348, 0
   size: 46, 24
   orig: 46, 24
   offset: 0, 0
@@ -54,14 +54,14 @@ colon
   index: -1
 draw
   rotate: false
-  xy: 0, 40
+  xy: 0, 72
   size: 94, 24
   orig: 94, 24
   offset: 0, 0
   index: 0
 draw
   rotate: false
-  xy: 94, 40
+  xy: 94, 72
   size: 94, 24
   orig: 94, 24
   offset: 0, 0
@@ -75,56 +75,56 @@ highlightedTile
   index: -1
 host
   rotate: false
-  xy: 188, 40
+  xy: 377, 24
   size: 49, 24
   orig: 49, 24
   offset: 0, 0
   index: -1
 hostHighlighted
   rotate: false
-  xy: 0, 64
+  xy: 426, 24
   size: 49, 24
   orig: 49, 24
   offset: 0, 0
   index: 0
 hostHighlighted
   rotate: false
-  xy: 49, 64
+  xy: 0, 48
   size: 49, 24
   orig: 49, 24
   offset: 0, 0
   index: 1
 join
   rotate: false
-  xy: 98, 64
+  xy: 49, 48
   size: 49, 24
   orig: 49, 24
   offset: 0, 0
   index: -1
 joinHighlighted_0 
   rotate: false
-  xy: 147, 64
+  xy: 98, 48
   size: 49, 24
   orig: 49, 24
   offset: 0, 0
   index: -1
 joinHighlighted_1 
   rotate: false
-  xy: 196, 64
+  xy: 147, 48
   size: 49, 24
   orig: 49, 24
   offset: 0, 0
   index: -1
 loss
   rotate: false
-  xy: 0, 88
+  xy: 188, 72
   size: 94, 24
   orig: 94, 24
   offset: 0, 0
   index: 0
 loss
   rotate: false
-  xy: 94, 88
+  xy: 282, 72
   size: 94, 24
   orig: 94, 24
   offset: 0, 0
@@ -215,77 +215,91 @@ O
   index: 1
 play
   rotate: false
-  xy: 112, 160
-  size: 48, 32
-  orig: 48, 32
+  xy: 394, 0
+  size: 46, 24
+  orig: 46, 24
   offset: 0, 0
   index: -1
 playHighlighted
   rotate: false
-  xy: 188, 88
+  xy: 0, 24
   size: 46, 24
   orig: 46, 24
   offset: 0, 0
   index: 0
 playHighlighted
   rotate: false
-  xy: 0, 112
+  xy: 46, 24
   size: 46, 24
   orig: 46, 24
   offset: 0, 0
   index: 1
 quit
   rotate: false
-  xy: 160, 160
-  size: 48, 32
-  orig: 48, 32
+  xy: 92, 24
+  size: 46, 24
+  orig: 46, 24
   offset: 0, 0
   index: -1
 quitHighlighted
   rotate: false
-  xy: 46, 112
+  xy: 138, 24
   size: 46, 24
   orig: 46, 24
   offset: 0, 0
   index: 0
 quitHighlighted
   rotate: false
-  xy: 92, 112
+  xy: 184, 24
   size: 46, 24
   orig: 46, 24
   offset: 0, 0
   index: 1
 replay
   rotate: false
-  xy: 138, 112
+  xy: 196, 48
   size: 56, 24
   orig: 56, 24
   offset: 0, 0
   index: -1
 replayHighlighted
   rotate: false
-  xy: 194, 112
+  xy: 252, 48
   size: 56, 24
   orig: 56, 24
   offset: 0, 0
   index: 0
 replayHighlighted
   rotate: false
-  xy: 0, 136
+  xy: 308, 48
   size: 56, 24
   orig: 56, 24
   offset: 0, 0
   index: 1
+waiting
+  rotate: false
+  xy: 376, 72
+  size: 94, 24
+  orig: 94, 24
+  offset: 0, 0
+  index: 0
+waiting
+  rotate: false
+  xy: 0, 96
+  size: 94, 24
+  orig: 94, 24
+  offset: 0, 0
+  index: 1
 win
   rotate: false
-  xy: 56, 136
+  xy: 94, 96
   size: 94, 24
   orig: 94, 24
   offset: 0, 0
   index: 0
 win
   rotate: false
-  xy: 150, 136
+  xy: 188, 96
   size: 94, 24
   orig: 94, 24
   offset: 0, 0
@@ -299,8 +313,29 @@ X
   index: 0
 X
   rotate: false
-  xy: 0, 16
+  xy: 240, 0
   size: 16, 16
   orig: 16, 16
+  offset: 0, 0
+  index: 1
+yourCode
+  rotate: false
+  xy: 364, 48
+  size: 76, 18
+  orig: 76, 18
+  offset: 0, 0
+  index: -1
+yourTurn
+  rotate: false
+  xy: 282, 96
+  size: 94, 24
+  orig: 94, 24
+  offset: 0, 0
+  index: 0
+yourTurn
+  rotate: false
+  xy: 376, 96
+  size: 94, 24
+  orig: 94, 24
   offset: 0, 0
   index: 1
