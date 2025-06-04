@@ -137,6 +137,23 @@ public class GameScreenMultiplayer extends GameScreen {
     }
 
     @Override
+    protected void handleReplay() {
+        boardState = new int[BOARD_SIZE][BOARD_SIZE];
+        marks.clear();
+        isGameOver = false;
+        gameState = GameState.PLAYING;
+        isLocalPlayerTurn = isServer; // Server starts
+        gameResult = 0;
+        resultTimer = 0f;
+        turnTimer = 0f;
+        imageReplay.setVisible(false);
+        // Optional: Add network message to sync replay with opponent
+        if (networkHandler != null) {
+            networkHandler.sendMessage("REPLAY");
+        }
+    }
+
+    @Override
     protected void input() {
         if (Gdx.input.justTouched() && !isGameOver && isLocalPlayerTurn && gameState.equals(GameState.PLAYING)) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY());
@@ -187,7 +204,6 @@ public class GameScreenMultiplayer extends GameScreen {
 
     @Override
     protected void draw() {
-        game.beginFrame();
 
         drawBoardAndMarks();
 
@@ -216,7 +232,7 @@ public class GameScreenMultiplayer extends GameScreen {
                 String timeString = String.valueOf(remaining);
                 if (remaining < 10)
                     timeString = '0' + timeString;
-                renderCode(timeString, notiPos.x + GameConfig.WINDOW.SPACING,
+                renderCode(timeString, notiPos.x + GameConfig.PVP.TURN_WIDTH / 2 - GameConfig.PVP.DIGIT_SIZE,
                         notiPos.y - GameConfig.PVP.TURN_HEIGHT - 2 * GameConfig.WINDOW.SPACING);
             }
         }
@@ -225,7 +241,6 @@ public class GameScreenMultiplayer extends GameScreen {
             drawResult();
         }
 
-        game.endFrame();
     }
 
     @Override
