@@ -7,11 +7,17 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Scaling;
 
 import game.caro.Caro;
 import game.caro.helper.GameConfig;
 import game.caro.helper.GameLogic;
+import game.caro.screens.HomeScreen;
 
 public abstract class GameScreen implements Screen {
     protected final Caro game;
@@ -41,6 +47,10 @@ public abstract class GameScreen implements Screen {
     protected float resultTimer = 0f;
     protected int gameResult = 0;
 
+    protected Stage stage;
+    protected Image imageBack;
+    protected Image imageReplay;
+
     public void drawBoardAndMarks() {
         boardSprite.draw(game.batch);
 
@@ -52,6 +62,8 @@ public abstract class GameScreen implements Screen {
 
     protected abstract void setGameResult(int mark);
 
+    protected abstract void handleReplay();
+
     protected abstract void draw();
 
     protected abstract void input();
@@ -61,6 +73,8 @@ public abstract class GameScreen implements Screen {
         this.backgroundTexture = game.backgroundTexture;
         worldHeight = game.viewport.getWorldHeight();
         worldWidth = game.viewport.getWorldWidth();
+        stage = new Stage(game.viewport, game.batch);
+
         notiPos = new Vector2(GameConfig.WINDOW.MARGIN_X, worldHeight - GameConfig.WINDOW.MARGIN_Y);
         boardTexture = new Texture("board.png");
 
@@ -84,6 +98,43 @@ public abstract class GameScreen implements Screen {
                 Animation.PlayMode.LOOP);
         lossAnimation = new Animation<>(GameConfig.SETTINGS.FRAME_DURATION, game.textureAtlas.findRegions("loss"),
                 Animation.PlayMode.LOOP);
+
+        TextureRegion backRegion = new TextureRegion(game.textureAtlas.findRegion("back"));
+        TextureRegion replayRegion = new TextureRegion(game.textureAtlas.findRegion("replay"));
+
+        imageBack = new Image(backRegion);
+        imageReplay = new Image(replayRegion);
+
+        imageBack.setSize(GameConfig.GAMEOVER.BACK_WIDTH, GameConfig.GAMEOVER.BACK_HEIGHT);
+        imageReplay.setSize(GameConfig.GAMEOVER.REPLAY_WIDTH, GameConfig.GAMEOVER.REPLAY_HEIGHT);
+
+        float x = worldWidth / 2 - GameConfig.GAMEOVER.REPLAY_WIDTH / 2;
+        float y = worldHeight / 2 - GameConfig.GAMEOVER.RESULT_HEIGHT / 2 - GameConfig.WINDOW.SPACING;
+
+        imageBack.setPosition(GameConfig.WINDOW.MARGIN_X, GameConfig.WINDOW.MARGIN_Y);
+        imageReplay.setPosition(x, y);
+
+        imageBack.setScaling(Scaling.fill);
+        imageReplay.setScaling(Scaling.fill);
+
+        imageBack.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new HomeScreen(game));
+            }
+        });
+
+        imageReplay.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                handleReplay();
+            }
+        });
+
+        imageReplay.setVisible(false);
+
+        stage.addActor(imageBack);
+        stage.addActor(imageReplay);
     }
 
     @Override
@@ -100,6 +151,7 @@ public abstract class GameScreen implements Screen {
 
     @Override
     public void show() {
+        game.addScreenInputProcessor(stage);
     }
 
     protected void logic() {
@@ -116,7 +168,13 @@ public abstract class GameScreen implements Screen {
     public void render(float delta) {
         input();
         logic();
+        game.beginFrame();
         draw();
+        imageReplay.setVisible(isGameOver);
+        game.endFrame();
+        stage.act(delta);
+        stage.draw();
+
     }
 
     @Override
@@ -128,6 +186,7 @@ public abstract class GameScreen implements Screen {
     public void dispose() {
         backgroundTexture.dispose();
         boardTexture.dispose();
+        stage.dispose();
     }
 
     protected boolean placeMark(int mark, int row, int col) {
@@ -163,11 +222,10 @@ public abstract class GameScreen implements Screen {
             resultAnimation = drawAnimation;
         }
         TextureRegion frame = resultAnimation.getKeyFrame(resultTimer, true);
-        float width = GameConfig.RESULT.WIDTH;
-        float height = GameConfig.RESULT.HEIGHT;
+        float width = GameConfig.GAMEOVER.RESULT_WIDTH;
+        float height = GameConfig.GAMEOVER.RESULT_HEIGHT;
         float x = worldWidth / 2 - width / 2;
         float y = worldHeight / 2 + height / 2;
         game.batch.draw(frame, x, y, width, height);
     }
-    // TODO: Back button when game ends
 }

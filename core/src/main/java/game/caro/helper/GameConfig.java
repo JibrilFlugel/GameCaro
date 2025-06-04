@@ -16,9 +16,13 @@ public class GameConfig {
         public static final float CELL_SIZE = (float) LENGTH / SIZE;
     }
 
-    public static class RESULT {
-        public static final int WIDTH = 470;
-        public static final int HEIGHT = 120;
+    public static class GAMEOVER {
+        public static final int RESULT_WIDTH = 470;
+        public static final int RESULT_HEIGHT = 120;
+        public static final int BACK_WIDTH = 230;
+        public static final int BACK_HEIGHT = 120;
+        public static final int REPLAY_WIDTH = 280;
+        public static final int REPLAY_HEIGHT = 120;
     }
 
     public static class MENU {
@@ -31,8 +35,8 @@ public class GameConfig {
         public static final int YOUR_CODE_HEIGHT = 72;
         public static final int DIGIT_SIZE = 72;
         public static final int TIME_SPAN = 30;
-        public static final int TURN_WIDTH = 188;
-        public static final int TURN_HEIGHT = 48;
+        public static final int TURN_WIDTH = 282;
+        public static final int TURN_HEIGHT = 72;
 
         public static enum GameState {
             WAITING,

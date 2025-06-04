@@ -22,6 +22,17 @@ public class GameScreen1P extends GameScreen {
     }
 
     @Override
+    protected void handleReplay() {
+        boardState = new int[BOARD_SIZE][BOARD_SIZE];
+        marks.clear();
+        isGameOver = false;
+        isPlayerTurn = true;
+        gameResult = 0;
+        resultTimer = 0f;
+        imageReplay.setVisible(false);
+    }
+
+    @Override
     protected void input() {
         if (Gdx.input.justTouched() && !isGameOver && isPlayerTurn) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY());
@@ -55,7 +66,6 @@ public class GameScreen1P extends GameScreen {
 
     @Override
     protected void draw() {
-        game.beginFrame();
 
         drawBoardAndMarks();
 
@@ -63,7 +73,6 @@ public class GameScreen1P extends GameScreen {
             drawResult();
         }
 
-        game.endFrame();
     }
 
     @Override
