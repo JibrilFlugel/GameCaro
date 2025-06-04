@@ -22,6 +22,7 @@ public abstract class GameScreen implements Screen {
 
     protected final float worldWidth;
     protected final float worldHeight;
+    protected Vector2 notiPos;
 
     protected final Texture backgroundTexture;
     protected Texture boardTexture;
@@ -60,7 +61,7 @@ public abstract class GameScreen implements Screen {
         this.backgroundTexture = game.backgroundTexture;
         worldHeight = game.viewport.getWorldHeight();
         worldWidth = game.viewport.getWorldWidth();
-
+        notiPos = new Vector2(GameConfig.WINDOW.MARGIN_X, worldHeight - GameConfig.WINDOW.MARGIN_Y);
         boardTexture = new Texture("board.png");
 
         boardSprite = new Sprite(boardTexture);
@@ -71,17 +72,17 @@ public abstract class GameScreen implements Screen {
 
         touchPos = new Vector2();
 
-        X_animation = new Animation<>(GameConfig.FRAME_DURATION, game.textureAtlas.findRegions("X"),
+        X_animation = new Animation<>(GameConfig.SETTINGS.FRAME_DURATION, game.textureAtlas.findRegions("X"),
                 Animation.PlayMode.LOOP);
-        O_animation = new Animation<>(GameConfig.FRAME_DURATION, game.textureAtlas.findRegions("O"),
+        O_animation = new Animation<>(GameConfig.SETTINGS.FRAME_DURATION, game.textureAtlas.findRegions("O"),
                 Animation.PlayMode.LOOP);
         marks = new Array<>();
 
-        winAnimation = new Animation<>(GameConfig.FRAME_DURATION, game.textureAtlas.findRegions("win"),
+        winAnimation = new Animation<>(GameConfig.SETTINGS.FRAME_DURATION, game.textureAtlas.findRegions("win"),
                 Animation.PlayMode.LOOP);
-        drawAnimation = new Animation<>(GameConfig.FRAME_DURATION, game.textureAtlas.findRegions("draw"),
+        drawAnimation = new Animation<>(GameConfig.SETTINGS.FRAME_DURATION, game.textureAtlas.findRegions("draw"),
                 Animation.PlayMode.LOOP);
-        lossAnimation = new Animation<>(GameConfig.FRAME_DURATION, game.textureAtlas.findRegions("loss"),
+        lossAnimation = new Animation<>(GameConfig.SETTINGS.FRAME_DURATION, game.textureAtlas.findRegions("loss"),
                 Animation.PlayMode.LOOP);
     }
 

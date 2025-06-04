@@ -20,8 +20,10 @@ import com.badlogic.gdx.utils.Array;
 
 import game.caro.Caro;
 import game.caro.classes.GameScreen;
+import game.caro.classes.MessageType;
 import game.caro.helper.GameConfig;
 import game.caro.helper.NetworkHandler;
+import game.caro.helper.GameConfig.PVP.GameState;
 
 public class GameScreenMultiplayer extends GameScreen {
 
@@ -33,7 +35,7 @@ public class GameScreenMultiplayer extends GameScreen {
     private boolean isLocalPlayerTurn;
     private NetworkHandler networkHandler;
     private Thread networkThread;
-    private String gameState = "WAITING"; // WAITING, PLAYING, GAME_OVER
+    private GameState gameState;
     private String serverIp;
     private String code;
     private volatile boolean broadcasting = true;
@@ -45,6 +47,7 @@ public class GameScreenMultiplayer extends GameScreen {
         super(game);
         this.isServer = isServer;
         this.serverIp = serverIp;
+        this.gameState = GameState.WAITING;
 
         digitRegions = game.textureAtlas.findRegions("numbers");
         yourCode = game.textureAtlas.findRegion("yourCode");
@@ -73,7 +76,7 @@ public class GameScreenMultiplayer extends GameScreen {
                 networkThread = new Thread(networkHandler);
                 networkThread.start();
                 broadcasting = false;
-                Gdx.app.postRunnable(() -> gameState = "PLAYING");
+                Gdx.app.postRunnable(() -> gameState = GameState.PLAYING);
                 serverSocket.close();
             } catch (IOException e) {
                 Gdx.app.log("Server", "Error: " + e.getMessage());
@@ -88,7 +91,7 @@ public class GameScreenMultiplayer extends GameScreen {
                 networkHandler = new NetworkHandler(socket, this);
                 networkThread = new Thread(networkHandler);
                 networkThread.start();
-                Gdx.app.postRunnable(() -> gameState = "PLAYING");
+                Gdx.app.postRunnable(() -> gameState = GameState.PLAYING);
             } catch (IOException e) {
                 Gdx.app.log("Client", "Error: " + e.getMessage());
             }
@@ -135,7 +138,7 @@ public class GameScreenMultiplayer extends GameScreen {
 
     @Override
     protected void input() {
-        if (Gdx.input.justTouched() && !isGameOver && isLocalPlayerTurn && gameState.equals("PLAYING")) {
+        if (Gdx.input.justTouched() && !isGameOver && isLocalPlayerTurn && gameState.equals(GameState.PLAYING)) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY());
             game.viewport.unproject(touchPos);
             float boardLeft = boardSprite.getX();
@@ -144,7 +147,7 @@ public class GameScreenMultiplayer extends GameScreen {
             int row = (int) ((touchPos.y - boardBottom) / GameConfig.BOARD.CELL_SIZE);
 
             if (placeMark(localMark, row, col)) {
-                networkHandler.sendMessage("MOVE " + row + " " + col);
+                networkHandler.sendMessage(MessageType.MOVE.serialize(row, col));
                 isLocalPlayerTurn = false;
             }
         }
@@ -165,8 +168,8 @@ public class GameScreenMultiplayer extends GameScreen {
     }
 
     public void handleDisconnection() {
-        if (!gameState.equals("GAME_OVER")) {
-            gameState = "GAME_OVER";
+        if (!gameState.equals(GameState.GAME_OVER)) {
+            gameState = GameState.GAME_OVER;
             isGameOver = true;
             gameResult = 1; // Opponent disconnect = insta win
         }
@@ -174,7 +177,7 @@ public class GameScreenMultiplayer extends GameScreen {
 
     @Override
     protected void setGameResult(int mark) {
-        gameState = "GAME_OVER";
+        gameState = GameState.GAME_OVER;
         if (mark == localMark) {
             gameResult = 1; // Local wins
         } else {
@@ -188,35 +191,37 @@ public class GameScreenMultiplayer extends GameScreen {
 
         drawBoardAndMarks();
 
-        if (gameState.equals("WAITING") && isServer) {
+        if (gameState.equals(GameState.WAITING) && isServer) {
             try {
                 game.batch.draw(yourCode,
-                        GameConfig.WINDOW.MARGIN_X, worldHeight - GameConfig.WINDOW.MARGIN_Y,
+                        notiPos.x, notiPos.y,
                         GameConfig.PVP.YOUR_CODE_WIDTH, GameConfig.PVP.YOUR_CODE_HEIGHT);
-                renderCode(code, GameConfig.WINDOW.MARGIN_X,
-                        worldHeight - GameConfig.WINDOW.MARGIN_Y - GameConfig.PVP.YOUR_CODE_HEIGHT
+                renderCode(code, notiPos.x,
+                        notiPos.y - GameConfig.PVP.YOUR_CODE_HEIGHT
                                 - GameConfig.WINDOW.SPACING);
             } catch (Exception e) {
                 game.font.draw(game.batch, e.toString(), 50, worldHeight - 50);
             }
 
-        } else if (gameState.equals("PLAYING")) {
+        } else if (gameState.equals(GameState.PLAYING)) {
             Array<AtlasRegion> turnFrames = isLocalPlayerTurn ? game.textureAtlas.findRegions("yourTurn")
                     : game.textureAtlas.findRegions("waiting");
-            turnAnimation = new Animation<>(GameConfig.FRAME_DURATION, turnFrames);
-            TextureRegion frame = turnAnimation.getKeyFrame(turnTimer, true);
-            game.batch.draw(frame, GameConfig.WINDOW.MARGIN_X, worldHeight - GameConfig.WINDOW.MARGIN_Y,
+            turnAnimation = new Animation<>(GameConfig.SETTINGS.FRAME_DURATION, turnFrames);
+            TextureRegion frame = turnAnimation.getKeyFrame(XO_timer, true);
+            game.batch.draw(frame, notiPos.x, notiPos.y,
                     GameConfig.PVP.TURN_WIDTH, GameConfig.PVP.TURN_HEIGHT);
             // countdown
-            int remaining = Math.max(0, GameConfig.PVP.TIME_SPAN - ((int) turnTimer)); // remaining >= 0
-            String timeString = String.valueOf(remaining);
-            if (remaining < 10)
-                timeString = '0' + timeString;
-            renderCode(timeString, GameConfig.WINDOW.MARGIN_X,
-                    worldHeight - GameConfig.WINDOW.MARGIN_Y - GameConfig.PVP.TURN_HEIGHT - GameConfig.WINDOW.SPACING);
+            if (isLocalPlayerTurn) {
+                int remaining = Math.max(0, GameConfig.PVP.TIME_SPAN - ((int) turnTimer)); // remaining >= 0
+                String timeString = String.valueOf(remaining);
+                if (remaining < 10)
+                    timeString = '0' + timeString;
+                renderCode(timeString, notiPos.x + GameConfig.WINDOW.SPACING,
+                        notiPos.y - GameConfig.PVP.TURN_HEIGHT - 2 * GameConfig.WINDOW.SPACING);
+            }
         }
 
-        if (gameState.equals("GAME_OVER")) {
+        if (gameState.equals(GameState.GAME_OVER)) {
             drawResult();
         }
 
@@ -225,11 +230,11 @@ public class GameScreenMultiplayer extends GameScreen {
 
     @Override
     public void render(float delta) {
-        if (gameState.equals("PLAYING") && isLocalPlayerTurn) {
+        if (gameState.equals(GameState.PLAYING) && isLocalPlayerTurn) {
             turnTimer += delta;
             if (turnTimer > GameConfig.PVP.TIME_SPAN) {
                 isLocalPlayerTurn = false;
-                networkHandler.sendMessage("TURN_SWITCH");
+                networkHandler.sendMessage(MessageType.TURN_SWITCH.serialize());
                 turnTimer = 0f;
             }
         }
@@ -239,6 +244,8 @@ public class GameScreenMultiplayer extends GameScreen {
     @Override
     public void dispose() {
         super.dispose();
+        broadcasting = false;
+
         if (networkHandler != null) {
             networkHandler.stop();
         }

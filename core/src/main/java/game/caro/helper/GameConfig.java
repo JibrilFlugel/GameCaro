@@ -2,10 +2,6 @@ package game.caro.helper;
 
 public class GameConfig {
 
-    public static final String TITLE = "Caro Game";
-    public static final int FPS = 60;
-    public static final float FRAME_DURATION = 0.5f;
-
     public static class WINDOW {
         public static final int WIDTH = 1600;
         public static final int HEIGHT = 900;
@@ -17,7 +13,7 @@ public class GameConfig {
     public static class BOARD {
         public static final int SIZE = 15;
         public static final int LENGTH = WINDOW.HEIGHT - WINDOW.MARGIN_Y;
-        public static final int CELL_SIZE = LENGTH / SIZE;
+        public static final float CELL_SIZE = (float) LENGTH / SIZE;
     }
 
     public static class RESULT {
@@ -35,8 +31,20 @@ public class GameConfig {
         public static final int YOUR_CODE_HEIGHT = 72;
         public static final int DIGIT_SIZE = 72;
         public static final int TIME_SPAN = 30;
-        public static final int TURN_WIDTH = 200;
-        public static final int TURN_HEIGHT = 50;
+        public static final int TURN_WIDTH = 188;
+        public static final int TURN_HEIGHT = 48;
+
+        public static enum GameState {
+            WAITING,
+            PLAYING,
+            GAME_OVER
+        }
+    }
+
+    public static class SETTINGS {
+        public static final String TITLE = "Caro Game";
+        public static final int FPS = 60;
+        public static final float FRAME_DURATION = 0.5f;
     }
 
     private GameConfig() {

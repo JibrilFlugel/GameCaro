@@ -26,9 +26,9 @@ public class ChoiceScreen implements Screen {
         Array<AtlasRegion> xFrames = game.textureAtlas.findRegions("X");
         Array<AtlasRegion> oFrames = game.textureAtlas.findRegions("O");
 
-        Animation<TextureRegion> xAnimation = new Animation<>(GameConfig.FRAME_DURATION, xFrames,
+        Animation<TextureRegion> xAnimation = new Animation<>(GameConfig.SETTINGS.FRAME_DURATION, xFrames,
                 Animation.PlayMode.LOOP);
-        Animation<TextureRegion> oAnimation = new Animation<>(GameConfig.FRAME_DURATION, oFrames,
+        Animation<TextureRegion> oAnimation = new Animation<>(GameConfig.SETTINGS.FRAME_DURATION, oFrames,
                 Animation.PlayMode.LOOP);
 
         float buttonSize = GameConfig.MENU.BUTTON_HEIGHT;
