@@ -1,33 +1,53 @@
-# Caro
+# Gomoku Game
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+A **Gomoku (Caro)** game implemented using **LibGDX**, supporting both **multiplayer over a local network** (via UDP sockets) and **single-player mode with AI**. The AI uses the **Minimax algorithm** with **Alpha-Beta Pruning** for efficient decision-making.
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+---
 
-## Platforms
+## Features
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
+- **AI Mode**: Play against an intelligent AI using Minimax with Alpha-Beta pruning.
+- **Multiplayer Mode**: Play with friends over a **local network** using sockets.
+- **Modern UI**: Clean game board with animated X and O pieces.
+- **Win Detection**: Automatic detection of win conditions.
 
-## Gradle
+---
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+## Screenshots
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+_Will add some later_
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+---
+
+## Technologies Used
+
+- **Java**
+- **LibGDX** (game framework)
+- **Java Sockets** (for local multiplayer)
+- **Minimax + Alpha-Beta Pruning** (for AI)
+
+---
+
+## AI Logic
+
+The AI uses the Minimax algorithm to evaluate the game board, searching possible future moves up to a certain depth, with optimizations from Alpha-Beta pruning to reduce the number of explored nodes and improve performance.
+
+---
+
+## Multiplayer Setup
+
+The game supports **local network multiplayer** via UDP sockets.
+
+### Host:
+- Binds a `DatagramSocket` to a port and listens for messages.
+- Manages turn order and game state.
+
+### Client:
+- Sends messages to the host's IP and port.
+- Synchronizes game state based on responses.
+
+---
+
+## Future improvements:
+- Sound effects and music
+- Zobrist hashing
