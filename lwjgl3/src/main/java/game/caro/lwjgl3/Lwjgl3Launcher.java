@@ -2,6 +2,8 @@ package game.caro.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowAdapter;
+
 import game.caro.Caro;
 import game.caro.helper.GameConfig;
 
@@ -41,6 +43,17 @@ public class Lwjgl3Launcher {
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
         //// They can also be loaded from the root of assets/ .
         configuration.setWindowIcon("logo.png");
+
+        configuration.setWindowListener(new Lwjgl3WindowAdapter() {
+            @Override
+            public boolean closeRequested() {
+                // This will (1) call your Screen.dispose() → GameScreenMultiplayer.dispose(),
+                // which in turn calls networkHandler.stop(), closing the socket,
+                // (2) then actually close the window.
+                com.badlogic.gdx.Gdx.app.exit();
+                return true; // allow the window to close
+            }
+        });
         return configuration;
     }
 }

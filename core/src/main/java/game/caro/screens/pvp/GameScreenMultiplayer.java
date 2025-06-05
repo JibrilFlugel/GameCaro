@@ -35,10 +35,11 @@ public class GameScreenMultiplayer extends GameScreen {
     private boolean isLocalPlayerTurn;
     private NetworkHandler networkHandler;
     private Thread networkThread;
+    private volatile boolean broadcasting = false;
+    private Thread broadcastThread;
     private GameState gameState;
     private String serverIp;
     private String code;
-    private volatile boolean broadcasting = true;
     private float turnTimer = 0f;
 
     private Array<AtlasRegion> digitRegions;
@@ -99,7 +100,8 @@ public class GameScreenMultiplayer extends GameScreen {
     }
 
     private void startBroadcasting() {
-        new Thread(() -> {
+        broadcasting = true;
+        broadcastThread = new Thread(() -> {
             try {
                 DatagramSocket socket = new DatagramSocket();
                 socket.setBroadcast(true);
@@ -116,7 +118,9 @@ public class GameScreenMultiplayer extends GameScreen {
             } catch (IOException | InterruptedException e) {
                 Gdx.app.log("Server", "Broadcast error: " + e.getMessage());
             }
-        }).start();
+            System.out.println("Broadcasting thread exiting");
+        });
+        broadcastThread.start();
     }
 
     private String getLocalIpAddress() {
@@ -147,10 +151,6 @@ public class GameScreenMultiplayer extends GameScreen {
         resultTimer = 0f;
         turnTimer = 0f;
         imageReplay.setVisible(false);
-        // Optional: Add network message to sync replay with opponent
-        if (networkHandler != null) {
-            networkHandler.sendMessage("REPLAY");
-        }
     }
 
     @Override
@@ -164,8 +164,12 @@ public class GameScreenMultiplayer extends GameScreen {
             int row = (int) ((touchPos.y - boardBottom) / GameConfig.BOARD.CELL_SIZE);
 
             if (placeMark(localMark, row, col)) {
-                networkHandler.sendMessage(MessageType.MOVE.serialize(row, col));
-                isLocalPlayerTurn = false;
+                try {
+                    networkHandler.sendMessage(MessageType.MOVE.serialize(row, col));
+                    isLocalPlayerTurn = false;
+                } catch (Exception e) {
+                    handleDisconnection();
+                }
             }
         }
     }
@@ -249,7 +253,11 @@ public class GameScreenMultiplayer extends GameScreen {
             turnTimer += delta;
             if (turnTimer > GameConfig.PVP.TIME_SPAN) {
                 isLocalPlayerTurn = false;
-                networkHandler.sendMessage(MessageType.TURN_SWITCH.serialize());
+                try {
+                    networkHandler.sendMessage(MessageType.TURN_SWITCH.serialize());
+                } catch (Exception e) {
+                    handleDisconnection();
+                }
                 turnTimer = 0f;
             }
         }
@@ -261,11 +269,14 @@ public class GameScreenMultiplayer extends GameScreen {
         super.dispose();
         broadcasting = false;
 
-        if (networkHandler != null) {
-            networkHandler.stop();
+        if (broadcastThread != null) {
+            broadcastThread.interrupt();
         }
         if (networkThread != null) {
             networkThread.interrupt();
+        }
+        if (networkHandler != null) {
+            networkHandler.stop();
         }
     }
 
